@@ -27,6 +27,7 @@ class Book(models.Model):
     # ManyToManyField used because genre can contain many books. Books can cover many genres.
     # Genre class has already been defined so we can specify the object above.
     genre = models.ManyToManyField(Genre, help_text='Escolha um gênero para este livro')
+    Language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True, help_text='Escolha uma língua para este título')
 
     def __str__(self):
         """string para representar o obejto Model"""
@@ -36,6 +37,12 @@ class Book(models.Model):
         """Retorna a url para acessar o registro detalhado do livro"""
         """we have to define a URL mapping that has the name book-detail, and define an associated view and template"""
         return reverse('book-detail', args=[str(self.id)])
+
+    def display_genre(self):
+        """Cria uma string para o genero, necessário para mostrá-lo na página Admin"""
+        return ', '.join(genre.name for genre in self.genre.all()[:3])
+
+    display_genre.short_description = 'Genre'
 
 
 class BookInstance(models.Model):
@@ -72,10 +79,10 @@ class BookInstance(models.Model):
 
 class Author(models.Model):
     """Modelo que representa o autor"""
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField(null=True, blank=True)
-    date_of_death = models.DateField('Died', null=True, blank=True)
+    first_name = models.CharField('Nome', max_length=100)
+    last_name = models.CharField('Sobrenome', max_length=100)
+    date_of_birth = models.DateField('Data de nascimento', null=True, blank=True)
+    date_of_death = models.DateField('Morte', null=True, blank=True)
 
     class Meta:
         ordering = ['last_name', 'first_name']
@@ -87,13 +94,13 @@ class Author(models.Model):
     def __str__(self):
         return f'{self.last_name}, {self.first_name}'
 
-    class Language(models.Model):
-        name = models.CharField(
-                                max_length=200,
-                                help_text='Digite a língua nativa do livro',
-                                )
 
-        def __str__(self):
-            """String para representar o objeto no site Admin"""
-            return self.name
+class Language(models.Model):
+    name = models.CharField(
+                            max_length=200,
+                            help_text='Digite a língua nativa do livro',
+                            )
 
+    def __str__(self):
+        """String para representar o objeto no site Admin"""
+        return self.name
