@@ -47,9 +47,9 @@ class BookInstance(models.Model):
 
     LOAN_STATUS = (
                    ('m', 'Manutenção'),
-                   ('e', 'emprestado'),
-                   ('d', 'disponível'),
-                   ('r', 'reservado')
+                   ('e', 'Emprestado'),
+                   ('d', 'Disponível'),
+                   ('r', 'Reservado')
                    )
 
     status = models.CharField(
@@ -86,3 +86,14 @@ class Author(models.Model):
 
     def __str__(self):
         return f'{self.last_name}, {self.first_name}'
+
+    class Language(models.Model):
+        name = models.CharField(
+                                max_length=200,
+                                help_text='Digite a língua nativa do livro',
+                                )
+
+        def __str__(self):
+            """String para representar o objeto no site Admin"""
+            return self.name
+
